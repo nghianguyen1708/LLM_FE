@@ -1,5 +1,5 @@
 import streamlit as st
-from api_calls import generate_response, load_chat_history, save_chat_history
+from api_calls import generate_response, load_chat_history, save_chat_history, get_chatbot_response
 from nav_pages import nav_page
 from request.request import ChatMessageCreate
 from menu import menu
@@ -38,16 +38,21 @@ if access_token != "None":
     if st.button("Send"):
         # Get response from chatbot
         response = generate_response(prompt)
-        # Save user message
-        user_message = ChatMessageCreate(message=prompt, sender="user")
-        with st.chat_message(name="User"):
-            st.write(prompt)
-        save_chat_history(user_message, chat_box_id, token)
-        # Save assistant response
-        assistant_message = ChatMessageCreate(message=response, sender="assistant")
-        with st.chat_message(name="Assistant"):
-            st.write(response)
-        save_chat_history(assistant_message, chat_box_id, token)
+        chatbotResponse = get_chatbot_response(token, prompt, chatMessages)
+        if chatbotResponse is not None:
+            logger.info(f"Chatbot response: {chatbotResponse}")
+            # Save user message
+            user_message = ChatMessageCreate(message=prompt, sender="user")
+            with st.chat_message(name="User"):
+                st.write(prompt)
+            save_chat_history(user_message, chat_box_id, token)
+            # Save assistant response
+            assistant_message = ChatMessageCreate(message=chatbotResponse, sender="assistant")
+            with st.chat_message(name="Assistant"):
+                st.write(chatbotResponse)
+            save_chat_history(assistant_message, chat_box_id, token)
+        else:
+            st.error("Failed to get chatbot response")
 else:
     st.error("You need to login first")
     menu()

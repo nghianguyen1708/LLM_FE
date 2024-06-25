@@ -1,5 +1,5 @@
 import streamlit as st
-from api_calls import get_all_chatboxes
+from api_calls import get_all_chatboxes, create_chatbox
 from cookie.cookie import cookie_controller
 from logger import logger
 from streamlit_cookies_controller import CookieController
@@ -21,6 +21,20 @@ def authenticated_menu(access_token):
         </div>
     </div>
     ''')
+    # Form to create a new chatbox
+    st.sidebar.subheader("Create New Chatbox")
+    chatbox_name = st.sidebar.text_input("Chatbox Name")
+    if st.sidebar.button("Create Chatbox"):
+        if chatbox_name:
+            response = create_chatbox(access_token, chatbox_name)
+            if response:
+                st.sidebar.success("Chatbox created successfully!")
+                # Reload the page to reflect new chatbox
+                st.experimental_rerun()
+            else:
+                st.sidebar.error("Failed to create chatbox.")
+        else:
+            st.sidebar.error("Chatbox name cannot be empty.")
     st.sidebar.page_link("pages/Logout.py", label="Logout")
 
 

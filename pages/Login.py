@@ -9,6 +9,9 @@ menu()
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
+if str(cookie_controller.get("access_token")) != "None":
+    nav_page("Homepage")
+
 if st.button("Login"):
     token = login(username, password)
     if token:

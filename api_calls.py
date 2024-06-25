@@ -11,11 +11,12 @@ load_dotenv()
 
 # FastAPI endpoint
 api_url = "http://127.0.0.1:8888"
+llm_url = "http://127.0.0.1:8000"
 
 def register(username, password, email, full_name=""):
     response = requests.post(f"{api_url}/users/", json={"username": username, "password": password, "email": email, "full_name": full_name})
     if response.status_code == 200:
-        st.success("Registered successfully")
+        return response.json()
     else:
         st.error(response.json().get("detail", "Registration failed"))
 
@@ -24,7 +25,7 @@ def login(username, password):
         response = requests.post(f"{api_url}/token", json={"username": username, "password": password})
         response.raise_for_status()  # Raise an error for bad status codes
         st.session_state.token = response.json()["access_token"]
-        logger.info(f"Response: {response.json()}")
+        logger.info(f"Response login: {response.json()}")
         return response.json()["access_token"]
     except requests.exceptions.HTTPError as http_err:
         st.error(f"HTTP error occurred: {http_err}")  # HTTP error
@@ -60,6 +61,21 @@ def get_all_chatboxes(token) -> List[ChatBox]:
         st.error("Failed to fetch secure data")
         return []
 
+def create_chatbox(access_token, chatbox_name):
+    url = f"{api_url}/chatboxes/"  # Replace with your actual API URL
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "name": chatbox_name
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    logger.info(f"Response: {response.json()}")
+    if response.status_code == 200:
+        return response.json()
+    return None
+
 def generate_response(prompt_input):
     # This is a placeholder for integrating your chatbot logic
     # You can replace this with actual chatbot API calls
@@ -70,7 +86,6 @@ def load_chat_history(token, chat_box_id) -> List[ChatMessage]:
     response = requests.get(f"{api_url}/chatboxes/{chat_box_id}/messages/", headers=headers)
 
     if response.status_code == 200:
-        logger.info(f"Chat history: {response.json()}")
         chat_messages = []
         for message_data in response.json():
             chat_message = ChatMessage(
@@ -99,3 +114,24 @@ def save_chat_history(message: ChatMessageCreate, chat_box_id: int, token: str):
     response = requests.post(url, json=data, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Failed to save message: {response.json()}")
+
+# Define the function to get chatbot prompt response
+def get_chatbot_response(access_token, prompt, chat_history: List[ChatMessage]):
+    url = f"{llm_url}/agent/query"  # Replace with your actual API URL
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "query_input": {
+            "text": prompt
+        },
+        "history_input": {
+            "history": [{"role": msg.sender, "content": msg.message} for msg in chat_history]
+        }
+    }
+    response = requests.post(url, json=payload, headers=headers, timeout=60)
+    if response.status_code == 200:
+        return str(response.json()["response"])
+    else:
+        return None

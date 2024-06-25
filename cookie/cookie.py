@@ -17,6 +17,7 @@ class CookieController:
                 expires = "; expires=" + date.toUTCString();
             }}
             document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+            location.reload();
         }}
         setCookie('{name}', '{value}', {max_age / (24 * 60 * 60)});
         </script>
@@ -41,13 +42,26 @@ class CookieController:
         if (streamlitCallback) {{
             streamlitCallback(cookieValue);
         }}
+        location.reload();
         </script>
         """
-
+        cookie_value = components.html(get_cookie_js, height=0, width=0)
         from streamlit_cookies_controller import CookieController
         controller = CookieController("cookies")
-        cookie_value = components.html(get_cookie_js, height=0, width=0)
         return controller.get("access_token")
+
+    # Function to erase the cookie using JavaScript
+    def erase_cookie_js(self, name):
+        js_code = f"""
+        <script>
+            function eraseCookie(name) {{
+                document.cookie = name + '=; Max-Age=-99999999;';
+            }}
+            eraseCookie('{name}');
+            location.reload();
+        </script>
+        """
+        components.html(js_code)
 
 
 cookie_controller = CookieController(key='cookies')
