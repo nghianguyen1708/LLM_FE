@@ -1,13 +1,21 @@
 import streamlit as st
 from api_calls import login
+from nav_pages import nav_page
+from menu import menu
+from cookie.cookie import cookie_controller
 
 st.title("Login")
-st.write("You have entered the login page", st.session_state["my_input"])
+menu()
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
+
 if st.button("Login"):
     token = login(username, password)
     if token:
-        st.session_state.token = token
+        # JavaScript code to set the cookie
+        cookie_controller.set("access_token", token)
         st.success("Logged in successfully")
-        st.experimental_rerun()
+        nav_page("Homepage")
+
+if st.button("Go to Register"):
+    nav_page("Register")

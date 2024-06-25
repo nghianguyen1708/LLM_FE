@@ -1,0 +1,43 @@
+import streamlit as st
+from api_calls import get_all_chatboxes
+from cookie.cookie import cookie_controller
+from logger import logger
+from streamlit_cookies_controller import CookieController
+def authenticated_menu(access_token):
+    # Show a navigation menu for authenticated users
+    chatBoxes = get_all_chatboxes(access_token)
+    st.sidebar.page_link("Homepage.py", label="Homepage")
+    for chatBox in chatBoxes:
+        st.sidebar.html(f'''
+    <div class="row-widget stPageLink" data-testid="stPageLink" style="width: 288px;">
+        <div class="st-emotion-cache-j7qwjs e11k5jya2">
+            <a data-testid="stPageLink-NavLink" href="./Chatbot?id={chatBox.id}" target="" rel="noreferrer" class="st-emotion-cache-15ddw4g e11k5jya1">
+            <span class="st-emotion-cache-1dj0hjr e11k5jya0">
+                <div data-testid="stMarkdownContainer" class="st-emotion-cache-d18qoy e1nzilvr4">
+                    <p>{chatBox.name}</p>
+                </div>
+            </span>
+            </a>
+        </div>
+    </div>
+    ''')
+    st.sidebar.page_link("pages/Logout.py", label="Logout")
+
+
+def unauthenticated_menu():
+    # Show a navigation menu for unauthenticated users
+    st.sidebar.page_link("Homepage.py", label="Homepage")
+    st.sidebar.page_link("pages/Login.py", label="Login")
+    st.sidebar.page_link("pages/Register.py", label="Register")
+
+
+def menu():
+    # Determine if a user is logged in or not, then show the correct
+    # navigation menu
+    # Get all cookies
+    access_token = str(cookie_controller.get("access_token"))
+    logger.info("Menu page " + access_token)
+    if access_token == "None":
+        unauthenticated_menu()
+        return
+    authenticated_menu(access_token)
