@@ -11,6 +11,7 @@ st.info("Are you sure you want to logout?")
 if st.button("Logout"):
     # Remove a cookie
     cookie_controller.erase_cookie_js("access_token")
-    st.session_state.token = None
+    if "access_token" in st.session_state:
+        del st.session_state.access_token
     st.success("Logged out successfully")
     nav_page("Homepage")

@@ -6,7 +6,6 @@ st.set_page_config(
 )
 
 st.title("VFarm Chatbot Main Page")
-st.sidebar.success("Select a page above.")
 
 menu()
 

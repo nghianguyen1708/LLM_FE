@@ -2,7 +2,7 @@ import streamlit as st
 from api_calls import generate_response, load_chat_history, save_chat_history, get_chatbot_response
 from nav_pages import nav_page
 from request.request import ChatMessageCreate
-from menu import menu
+from menu import menu, menu_chatbox_pages
 from logger import logger
 from cookie.cookie import cookie_controller
 
@@ -15,7 +15,7 @@ st.subheader("Chatbot")
 access_token = str(cookie_controller.get("access_token"))
 logger.info("Chatbot page " + access_token)
 if access_token != "None":
-    menu()
+    menu_chatbox_pages(access_token)
     token = access_token
     if st._get_query_params().get("id", None)[0] is None:
         st.error("Chatbox ID not found")

@@ -6,7 +6,7 @@ class CookieController:
     def __init__(self, key):
         self.key = key
 
-    def set(self, name, value, max_age=60 * 60 * 24 * 30):
+    def set(self, name, value, max_age=60 * 60 * 24):
         set_cookie_js = f"""
         <script>
         function setCookie(name, value, days) {{
