@@ -11,7 +11,7 @@ load_dotenv()
 
 # FastAPI endpoint
 api_url = "http://127.0.0.1:8888"
-llm_url = "http://127.0.0.1:8000"
+llm_url = "http://127.0.0.1:8081"
 
 def register(username, password, email, full_name=""):
     response = requests.post(f"{api_url}/users/", json={"username": username, "password": password, "email": email, "full_name": full_name})
