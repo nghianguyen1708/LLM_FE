@@ -2,7 +2,6 @@ import streamlit as st
 from api_calls import get_all_chatboxes, create_chatbox
 from cookie.cookie import cookie_controller
 from logger import logger
-from streamlit_cookies_controller import CookieController
 def authenticated_menu(access_token):
     # Show a navigation menu for authenticated users
     st.sidebar.title("Chatboxes List")

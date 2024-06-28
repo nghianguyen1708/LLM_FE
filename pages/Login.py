@@ -6,7 +6,10 @@ from cookie.cookie import cookie_controller
 import requests
 
 GOOGLE_LOGIN_URL = f"{api_url}/auth/google"
-
+st.set_page_config(
+    page_title="Login Page",
+    page_icon="🔒",
+)
 st.title("Login")
 menu()
 username = st.text_input("Username")

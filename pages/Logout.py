@@ -4,6 +4,11 @@ from nav_pages import nav_page
 from logger import logger
 from menu import menu
 from cookie.cookie import cookie_controller
+
+st.set_page_config(
+    page_title="Logout Page",
+    page_icon="🔒",
+)
 st.title("Logout")
 menu()
 

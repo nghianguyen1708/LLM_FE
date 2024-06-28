@@ -5,6 +5,11 @@ from logger import logger
 from menu import menu
 import re
 
+st.set_page_config(
+    page_title="Register Page",
+    page_icon="🔒",
+)
+
 def is_valid_email(email):
     # Simple regex for validating an email address
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)

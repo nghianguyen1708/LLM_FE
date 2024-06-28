@@ -1,5 +1,5 @@
 import streamlit as st
-from api_calls import generate_response, load_chat_history, save_chat_history, get_chatbot_response
+from api_calls import generate_response, load_chat_history, save_chat_history, get_chatbot_response, delete_chatbox
 from nav_pages import nav_page
 from request.request import ChatMessageCreate
 from menu import menu, menu_chatbox_pages
@@ -24,6 +24,15 @@ if access_token != "None":
     # Implement chatbot UI here
     # Load chat history
     chatMessages = load_chat_history(token, chat_box_id)
+    # Delete chatbox button
+    delete_button = st.button("Delete chatbox", key=f"delete-{chat_box_id}")
+    if delete_button:
+        if delete_chatbox(access_token, chat_box_id):
+            st.sidebar.success("Chatbox deleted successfully!")
+            # Reload the page to reflect new chatbox
+            nav_page("Homepage")
+        else:
+            st.sidebar.error("Failed to delete chatbox.")
     # Display chat history with roles
     with st.container():
         for message in chatMessages:

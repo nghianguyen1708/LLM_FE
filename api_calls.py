@@ -76,6 +76,15 @@ def create_chatbox(access_token, chatbox_name):
         return response.json()
     return None
 
+def delete_chatbox(access_token, chat_box_id):
+    url = f"{api_url}/chatboxes/{chat_box_id}/"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.delete(url, headers=headers)
+    return response.json()["result"] == True
+
 def generate_response(prompt_input):
     # This is a placeholder for integrating your chatbot logic
     # You can replace this with actual chatbot API calls
